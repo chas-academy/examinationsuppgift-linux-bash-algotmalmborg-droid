@@ -1,14 +1,18 @@
 #!/bin/bash
-if [ "$EUID" -ne 0 ];   then
+
+#kolla scriptet körs i root.
+if [ "$EUID" -ne 0 ];   then   
   echo "ERROR: Script not in root."
   exit 1
 fi
 
+#kolla om minst en användare skickats med.
 if [ "$#" -eq 0 ]; then
-  echo "ERROR:Add atleast one user."
+  echo "ERROR: Add atleast one user."
   exit 1
 fi
 
+#skapar användare och filer där enbart ägaren har skriv och läsrättighet.
 for user in "$@"; do
   useradd -m "$user"
   echo "USER '$user' created."
@@ -21,7 +25,7 @@ for user in "$@"; do
   chmod 700 "$home_dir/Work"
   chown -R "$user":"$user" "$home_dir"
 done
-
+#skapar en welcome fil åt nya användare som säger välkommen och alla tidigare tillagda användare.
 for user in "$@"; do
   home_dir="/home/$user"
   welcome_file="$home_dir/welcome.txt"
@@ -37,4 +41,4 @@ for user in "$@"; do
 
   chown "$user":"$user" "$welcome_file"
   echo "Hemkatalog och filer skapade för '$user'."
-done
+done  
